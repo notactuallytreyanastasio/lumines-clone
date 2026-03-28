@@ -28,17 +28,15 @@ defmodule Lumines.Engine.Board do
   end
 
   @spec put(t(), integer(), integer(), color()) :: t()
-  def put(board, col, row, value) do
-    if in_bounds?(col, row) do
-      if value == nil do
-        Map.delete(board, {col, row})
-      else
-        Map.put(board, {col, row}, value)
-      end
-    else
-      board
-    end
+  def put(board, col, row, nil) when col >= 0 and col < @cols and row >= 0 and row < @rows do
+    Map.delete(board, {col, row})
   end
+
+  def put(board, col, row, value) when col >= 0 and col < @cols and row >= 0 and row < @rows do
+    Map.put(board, {col, row}, value)
+  end
+
+  def put(board, _col, _row, _value), do: board
 
   @spec in_bounds?(integer(), integer()) :: boolean()
   def in_bounds?(col, row) do
@@ -47,7 +45,7 @@ defmodule Lumines.Engine.Board do
 
   @spec occupied?(t(), integer(), integer()) :: boolean()
   def occupied?(board, col, row) do
-    get(board, col, row) != nil
+    not is_nil(get(board, col, row))
   end
 
   @spec clear_marked(t(), Range.t()) :: t()

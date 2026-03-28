@@ -4,13 +4,16 @@ defmodule Lumines.Engine.Scoring do
   Base points per square, with multipliers for combos and chains.
   """
 
-  defstruct score: 0, combo: 0, chain: 0
+  use Ecto.Schema
 
-  @type t :: %__MODULE__{
-          score: non_neg_integer(),
-          combo: non_neg_integer(),
-          chain: non_neg_integer()
-        }
+  @type t :: %__MODULE__{}
+
+  @primary_key false
+  embedded_schema do
+    field :score, :integer, default: 0
+    field :combo, :integer, default: 0
+    field :chain, :integer, default: 0
+  end
 
   @base_points 100
 

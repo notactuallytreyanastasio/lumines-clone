@@ -3,15 +3,18 @@ defmodule Lumines.Engine.Piece do
   2x2 piece for Lumines. Colors stored as {top_left, top_right, bottom_left, bottom_right}.
   """
 
+  use Ecto.Schema
+
   alias Lumines.Engine.Board
 
-  defstruct [:colors, :col, :row]
+  @type t :: %__MODULE__{}
 
-  @type t :: %__MODULE__{
-          colors: {Board.color(), Board.color(), Board.color(), Board.color()},
-          col: non_neg_integer() | nil,
-          row: non_neg_integer() | nil
-        }
+  @primary_key false
+  embedded_schema do
+    field :colors, :any, virtual: true
+    field :col, :integer
+    field :row, :integer
+  end
 
   @spec new([Board.color()]) :: t()
   def new([tl, tr, bl, br]) do

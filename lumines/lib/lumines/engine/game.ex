@@ -4,26 +4,22 @@ defmodule Lumines.Engine.Game do
   Flow: spawn -> fall -> lock -> gravity -> scan -> (sweep clears async) -> spawn
   """
 
+  use Ecto.Schema
+
   alias Lumines.Engine.{Board, Piece, Gravity, Scanner, Sweep, Scoring}
 
-  defstruct [
-    :board,
-    :piece,
-    :next_pieces,
-    :sweep,
-    :scoring,
-    :phase
-  ]
-
   @type phase :: :playing | :game_over
-  @type t :: %__MODULE__{
-          board: Board.t(),
-          piece: Piece.t(),
-          next_pieces: [Piece.t()],
-          sweep: Sweep.t(),
-          scoring: Scoring.t(),
-          phase: phase()
-        }
+  @type t :: %__MODULE__{}
+
+  @primary_key false
+  embedded_schema do
+    field :board, :map, default: %{}
+    field :phase, Ecto.Enum, values: [:playing, :game_over], default: :playing
+    embeds_one :piece, Piece
+    embeds_many :next_pieces, Piece
+    embeds_one :sweep, Sweep
+    embeds_one :scoring, Scoring
+  end
 
   @queue_size 3
 
@@ -36,8 +32,8 @@ defmodule Lumines.Engine.Game do
       board: Board.new(),
       piece: Piece.spawn(piece),
       next_pieces: rest,
-      sweep: Sweep.new(),
-      scoring: Scoring.new(),
+      sweep: %Sweep{},
+      scoring: %Scoring{},
       phase: :playing
     }
   end

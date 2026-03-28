@@ -3,11 +3,16 @@ defmodule Lumines.Engine.Sweep do
   The sweep line moves left-to-right across the board, clearing marked cells.
   """
 
+  use Ecto.Schema
+
   alias Lumines.Engine.Board
 
-  defstruct col: 0
+  @type t :: %__MODULE__{}
 
-  @type t :: %__MODULE__{col: non_neg_integer()}
+  @primary_key false
+  embedded_schema do
+    field :col, :integer, default: 0
+  end
 
   @spec new() :: t()
   def new, do: %__MODULE__{col: 0}
