@@ -103,3 +103,11 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+/* ── Lumines Shared Design System ──────────────────────────── */
+/* Import order matters: variables must come first */
+@import '../../../shared/styles/variables.css';
+@import '../../../shared/styles/game.css';
+@import '../../../shared/styles/tiles.css';
+@import '../../../shared/styles/sweep.css';
+@import '../../../shared/styles/animations.css';
