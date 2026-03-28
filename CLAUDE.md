@@ -1,5 +1,48 @@
 # Project Instructions
 
+## Lumines Clone — Phoenix LiveView
+
+A Lumines puzzle game clone. The active implementation is Phoenix LiveView in `lumines/`.
+
+### Quick reference
+
+```bash
+cd lumines
+mix test                    # 72 unit + 27 property tests
+mix phx.server              # http://localhost:4000/game
+```
+
+### Architecture
+
+The game engine is **purely functional** — no GenServers, no processes. Every module takes state in and returns state out. The LiveView owns the timers and process.
+
+- `lib/lumines/engine/` — 7 modules: Board, Piece, Gravity, Scanner, Sweep, Scoring, Game
+- `lib/lumines_web/live/game_live.ex` — LiveView with keyboard handling + dual timers
+- `test/lumines/engine/` — unit tests + property-based tests (stream_data)
+
+All engine structs use Ecto `embedded_schema` (Game, Piece, Sweep, Scoring). Board is a sparse map `%{{col, row} => color}`.
+
+### Elixir style rules
+
+- No nested `if` statements — use multi-clause functions with guards or `case`
+- Use `not is_nil(x)` instead of `x != nil`
+- Prefer `embedded_schema` over plain `defstruct` for data structures
+- Stage git files explicitly by name (never `git add .` or `git add -A`)
+
+### What worked during development
+
+- **Parallel agents per implementation**: 3 implementations (LiveView, React, Pure TS) built simultaneously by separate agents, each in its own directory. No conflicts.
+- **Shared spec as contract**: `GAME_ENGINE_SPEC.md` defined the game rules once. All implementations referenced it.
+- **TDD**: Tests written first for each engine module, then implementation. Property-based tests added after to catch edge cases.
+- **Modular engine**: Splitting the engine into 7 focused modules (Board, Piece, Gravity, Scanner, Sweep, Scoring, Game) made each one independently testable and simple.
+- **Pure functional engine**: No side effects in the engine means tests are fast, deterministic, and don't need setup/teardown.
+
+### What to watch for
+
+- The deciduous graph has 342 nodes across all workstreams — use `deciduous nodes --branch` to filter
+- The React and Pure TS implementations exist on `main` but the active focus is LiveView on `liveview-engine` branch
+- Scoring formulas diverged slightly between implementations — LiveView uses 100 base pts × combo multiplier + 50 × chain level
+
 <!-- deciduous:start -->
 ## Decision Graph Workflow
 
